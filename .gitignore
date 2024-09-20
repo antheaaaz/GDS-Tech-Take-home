@@ -1,0 +1,10 @@
+# Python virtual environment and packages
+venv
+
+# Random files
+.DS_Store
+
+# Ignore data files
+*.csv
+*.xlsx
+*.json
