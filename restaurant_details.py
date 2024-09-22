@@ -1,12 +1,11 @@
 import pandas as pd
-import json
 
 # Load the restaurant data from the JSON file
-with open("C:\\Users\\user\\Downloads\\restaurant_data.json", encoding="utf-8") as file:
+with open("restaurant_data.json", encoding="utf-8") as file:
     restaurant_data = pd.read_json(file)
 
 # Load the country code data from the Excel file
-country_data = pd.read_excel("C:\\Users\\user\\Downloads\\Country-Code.xlsx")
+country_data = pd.read_excel("Country-Code.xlsx")
 
 # Create a dictionary to map country codes to country names
 country_code_lookup = dict(zip(country_data['Country Code'], country_data['Country']))
@@ -43,26 +42,22 @@ for pages in restaurant_data["restaurants"]:
                         event_info = event['event']
 
                         # Check if photos exist and extract the first photo URL (if available)
-                        photo_url = event_info['photos'][0]['photo']['url'] if event_info.get('photos') else 'N/A'
+                        photo_url = event_info['photos'][0]['photo']['url'] if event_info.get('photos') else 'NA'
 
-                        # Create a new entry for each event
-                        event_entry = restaurant_entry.copy()  # Copy restaurant data for each event
-                        event_entry.update({
+                        # Copy restaurant data for each event
+                        restaurant_entry.update({
                             'Event Id': event_info['event_id'],
                             'Event Title': event_info['title'],
                             'Event Start Date': event_info['start_date'],
                             'Event End Date': event_info['end_date'],
                             'Photo URL': photo_url,
                         })
-
+                        
                         # Append the event entry to the restaurant details list
-                        restaurant_details = pd.concat([restaurant_details,pd.DataFrame(event_entry,columns=restaurant_details.columns,index=[0])],ignore_index=True)
-                else:
-                    # If no event data, append the restaurant details without event information
-                    restaurant_details = pd.concat([restaurant_details,pd.DataFrame(restaurant_entry,columns=restaurant_details.columns,index=[0])],ignore_index=True)
+                restaurant_details = pd.concat([restaurant_details,pd.DataFrame(restaurant_entry,columns=restaurant_details.columns,index=[0]).fillna("NA")],ignore_index=True)
         else:
             print(f"Skipping entry without 'restaurant' key: {entry}")
 
 # print(restaurant_details)  # Check if data exists in the list
 
-restaurant_details.to_csv('restaurant_details.csv')
+restaurant_details.to_csv('restaurant_details.csv') 
